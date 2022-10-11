@@ -1,0 +1,54 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AdminLoginResponse {
+  access_token: String!
+  admin: CreateAdminDto!
+}
+
+type CreateAdminDto {
+  email: String!
+  id: ID!
+}
+
+input CreateAdminInput {
+  email: String!
+  password: String!
+}
+
+type CreateUserDto {
+  birthday: Date!
+  id: ID!
+  name: String!
+}
+
+input CreateUserInput {
+  birthday: Date!
+  email: String!
+  gender: String!
+  interestedIn: String!
+  interests: [String!]!
+  name: String!
+  phone_number: Float!
+}
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+input LoginAdminInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createAdmin(createAdminInput: CreateAdminInput!): CreateAdminDto!
+  createUser(createUserInput: CreateUserInput!): CreateUserDto!
+}
+
+type Query {
+  findAll: [CreateAdminDto!]!
+  login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
+}
