@@ -1,14 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminService } from '../admin.service';
 import * as bcrypt from 'bcrypt';
 import { Admin } from '../entities/admin.entity';
+import { ForgetPasswordInput } from './dto/forget-password.input';
+import { sendMail } from './utils/sendEmail';
 
 @Injectable()
 export class AuthService {
   constructor(
     private adminService: AdminService,
     private jwtService: JwtService,
+    private sendMail: sendMail,
   ) {}
 
   //   async validateUser(username: string, pass: string): Promise<any> {
@@ -39,9 +46,39 @@ export class AuthService {
       sub: admin.id,
     };
 
+    const access_token = await this.generateJwtToken(payload);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
       admin,
     };
+  }
+
+  async forgetPassword(forgetPasswordInput: ForgetPasswordInput) {
+    const admin = await this.adminService.findByEmail(
+      forgetPasswordInput.email,
+    );
+    if (!admin) {
+      throw new BadRequestException('Email not registered!');
+    }
+
+    // console.log(admin.id);
+    const payload = {
+      sub: admin.id,
+      adminEmail: admin.email,
+    };
+    const forgetPasswordToken = await this.generateJwtToken(payload);
+    const mailSend = await this.sendMail.sendForgetPasswordMail(
+      admin.email,
+      forgetPasswordToken,
+    );
+    return {
+      token: forgetPasswordToken,
+      mailSend,
+    };
+  }
+
+  private async generateJwtToken(payload: any) {
+    return await this.jwtService.sign(payload);
   }
 }

@@ -38,6 +38,15 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 """
 scalar Date
 
+input ForgetPasswordInput {
+  email: String!
+}
+
+type ForgetPasswordResponse {
+  mailSend: Boolean!
+  token: String!
+}
+
 input LoginAdminInput {
   email: String!
   password: String!
@@ -49,6 +58,7 @@ type Mutation {
 }
 
 type Query {
+  ForgetPassword(ForgetPasswordInput: ForgetPasswordInput!): ForgetPasswordResponse!
   findAll: [CreateAdminDto!]!
   login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
 }
