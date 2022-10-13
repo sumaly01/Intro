@@ -53,6 +53,7 @@ input LoginAdminInput {
 }
 
 type Mutation {
+  ResetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   createAdmin(createAdminInput: CreateAdminInput!): CreateAdminDto!
   createUser(createUserInput: CreateUserInput!): CreateUserDto!
 }
@@ -61,4 +62,13 @@ type Query {
   ForgetPassword(ForgetPasswordInput: ForgetPasswordInput!): ForgetPasswordResponse!
   findAll: [CreateAdminDto!]!
   login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
+}
+
+input ResetPasswordInput {
+  confirmPassword: String!
+  password: String!
+}
+
+type ResetPasswordResponse {
+  resetPassword: Boolean!
 }

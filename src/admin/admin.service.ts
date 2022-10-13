@@ -20,15 +20,17 @@ export class AdminService {
     if (admin) {
       throw new BadRequestException('Email already used');
     }
+    const pw = createAdminInput.password;
+    createAdminInput.password = await this.hashPassword(pw);
 
-    createAdminInput.password = await bcrypt.hash(
-      createAdminInput.password,
-      10,
-    );
     const createdAdmin = new this.adminModel(createAdminInput);
     // createdAdmin.signedIn = false;
     const adminCreated = await createdAdmin.save();
     return adminCreated as Admin;
+  }
+
+  async hashPassword(pw) {
+    return await bcrypt.hash(pw, 10);
   }
 
   async findAll(): Promise<Admin[]> {
@@ -41,18 +43,17 @@ export class AdminService {
   }
 
   async findOne(id: string) {
-    const admin = await this.adminModel.findOne({ _id: id });
+    const admin = await this.adminModel.findById({ _id: id });
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
     return admin;
   }
 
-  // update(id: number, updateAdminInput: UpdateAdminInput) {
-  //   return `This action updates a #${id} admin`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} admin`;
-  // }
+  async resetPassword(id: string, password: string) {
+    const admin = await this.findOne(id);
+    admin.password = password;
+    await admin.save();
+    return true;
+  }
 }

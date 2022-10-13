@@ -8,7 +8,9 @@ import { AdminService } from '../admin.service';
 import * as bcrypt from 'bcrypt';
 import { Admin } from '../entities/admin.entity';
 import { ForgetPasswordInput } from './dto/forget-password.input';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { sendMail } from './utils/sendEmail';
+import { ResetPasswordInput } from './dto/reset-password.input';
 
 @Injectable()
 export class AuthService {
@@ -76,6 +78,20 @@ export class AuthService {
       token: forgetPasswordToken,
       mailSend,
     };
+  }
+
+  async resetPassword(adminId: string, resetPasswordInput: ResetPasswordInput) {
+    if (resetPasswordInput.password !== resetPasswordInput.confirmPassword) {
+      throw new BadRequestException('Passwords do not match');
+    }
+    const password = await this.adminService.hashPassword(
+      resetPasswordInput.password,
+    );
+    const updatedPassword = await this.adminService.resetPassword(
+      adminId,
+      password,
+    );
+    return updatedPassword;
   }
 
   private async generateJwtToken(payload: any) {
