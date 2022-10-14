@@ -10,11 +10,13 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './admin/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { GenderModule } from './admin/gender/gender.module';
 @Module({
   imports: [
     UsersModule,
     AdminModule,
     AuthModule,
+    GenderModule,
     //NOT WORKING
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'dev'}`,

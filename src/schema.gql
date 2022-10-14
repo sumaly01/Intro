@@ -17,6 +17,16 @@ input CreateAdminInput {
   password: String!
 }
 
+input CreateGenderInput {
+  genderName: String!
+}
+
+type CreateGenderResponse {
+  genderName: String!
+  id: ID!
+  isDeleted: Boolean!
+}
+
 type CreateUserDto {
   birthday: Date!
   id: ID!
@@ -38,6 +48,11 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 """
 scalar Date
 
+input DeleteGenderInput {
+  confirmDelete: Boolean!
+  id: ID!
+}
+
 input ForgetPasswordInput {
   email: String!
 }
@@ -55,12 +70,16 @@ input LoginAdminInput {
 type Mutation {
   ResetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   createAdmin(createAdminInput: CreateAdminInput!): CreateAdminDto!
+  createGender(createGenderInput: CreateGenderInput!): CreateGenderResponse!
   createUser(createUserInput: CreateUserInput!): CreateUserDto!
+  removeGender(deleteGenderInput: DeleteGenderInput!): CreateGenderResponse!
+  updateGender(updateGenderInput: UpdateGenderInput!): CreateGenderResponse!
 }
 
 type Query {
   ForgetPassword(ForgetPasswordInput: ForgetPasswordInput!): ForgetPasswordResponse!
   findAll: [CreateAdminDto!]!
+  findGenders: [CreateGenderResponse!]!
   login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
 }
 
@@ -71,4 +90,9 @@ input ResetPasswordInput {
 
 type ResetPasswordResponse {
   resetPassword: Boolean!
+}
+
+input UpdateGenderInput {
+  genderName: String!
+  id: ID!
 }
