@@ -27,27 +27,6 @@ type CreateGenderResponse {
   isDeleted: Boolean!
 }
 
-type CreateUserDto {
-  birthday: Date!
-  id: ID!
-  name: String!
-}
-
-input CreateUserInput {
-  birthday: Date!
-  email: String!
-  gender: String!
-  interestedIn: String!
-  interests: [String!]!
-  name: String!
-  phone_number: Float!
-}
-
-"""
-A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar Date
-
 input DeleteGenderInput {
   confirmDelete: Boolean!
   id: ID!
@@ -62,6 +41,11 @@ type ForgetPasswordResponse {
   token: String!
 }
 
+type Gender {
+  genderName: String!
+  isDeleted: Boolean!
+}
+
 input LoginAdminInput {
   email: String!
   password: String!
@@ -71,9 +55,30 @@ type Mutation {
   ResetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   createAdmin(createAdminInput: CreateAdminInput!): CreateAdminDto!
   createGender(createGenderInput: CreateGenderInput!): CreateGenderResponse!
-  createUser(createUserInput: CreateUserInput!): CreateUserDto!
+  createOtp(phoneInput: PhoneInput!): OtpUserResponse!
   removeGender(deleteGenderInput: DeleteGenderInput!): CreateGenderResponse!
   updateGender(updateGenderInput: UpdateGenderInput!): CreateGenderResponse!
+  verifyOtp(otpInput: OtpInput!): OtpVerifyResponse!
+}
+
+input OtpInput {
+  otp: Float!
+  phone_number: Float!
+}
+
+type OtpUserResponse {
+  id: ID!
+  newUser: Boolean!
+  otp: Float!
+  phone_number: Float!
+}
+
+type OtpVerifyResponse {
+  otpVerify: Boolean!
+}
+
+input PhoneInput {
+  phone_number: Float!
 }
 
 type Query {

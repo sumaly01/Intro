@@ -1,21 +1,57 @@
-import { ObjectType, Field, Float } from '@nestjs/graphql';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { ObjectType, Field } from '@nestjs/graphql';
 import { GraphQLDate } from 'graphql-iso-date';
 import { IsEmail } from 'class-validator';
+import mongoose from 'mongoose';
+import { Gender } from 'src/admin/gender/entities/gender.entity';
+
+@Schema()
 @ObjectType()
-export class User {
-  @Field(() => Float)
+export class User extends mongoose.Document {
+  @Prop({ type: Number, required: true, trim: true, unique: true })
+  @Field()
   phone_number: number;
+
+  @Prop({ type: Date })
   @Field(() => GraphQLDate)
-  birthday: GraphQLDate;
+  birthday?: GraphQLDate;
+
+  @Prop({ type: String })
   @Field()
-  name: string;
+  name?: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Gender' })
   @Field()
-  gender: string;
+  gender?: Gender;
+
+  @Prop({ type: String })
   @Field()
-  interestedIn: string;
-  @Field()
-  interests: string[];
+  interestedIn?: string;
+
+  @Prop({ type: [{ type: String }] })
+  interests?: string[];
+
+  @Prop({ type: String, trim: true })
   @Field()
   @IsEmail()
-  email: string;
+  email?: string;
+
+  @Prop({ type: Number, required: true })
+  @Field()
+  otp: number;
+
+  @Prop({ type: Date })
+  @Field(() => GraphQLDate)
+  expiry_time: GraphQLDate;
+
+  @Prop({ type: Boolean })
+  @Field()
+  newUser: boolean;
+
+  @Prop({ type: Boolean, default: false })
+  @Field()
+  verifyOtp?: boolean;
 }
+
+export const UserSchema = SchemaFactory.createForClass(User);

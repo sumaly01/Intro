@@ -17,7 +17,7 @@ import { GenderModule } from './admin/gender/gender.module';
     AdminModule,
     AuthModule,
     GenderModule,
-    //NOT WORKING
+
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'dev'}`,
       isGlobal: true,

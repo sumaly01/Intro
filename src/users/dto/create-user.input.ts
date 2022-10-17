@@ -1,10 +1,10 @@
-import { InputType, Float, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 import { GraphQLDate } from 'graphql-iso-date';
 import { IsEmail } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
-  @Field(() => Float)
+  @Field(() => Number)
   phone_number: number;
   @Field(() => GraphQLDate)
   birthday: GraphQLDate;
