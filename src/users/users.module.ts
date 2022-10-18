@@ -7,16 +7,36 @@ import { UserSchema } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { UserJwtStrategy } from './auth/strategy/user.jwt.strategy';
 import { GenderModule } from 'src/admin/gender/gender.module';
+import { IntroModule } from './intro/intro.module';
+import { ConfigService } from '@nestjs/config';
+
+const jwtFactory = {
+  useFactory: async (configService: ConfigService) => ({
+    signOptions: { expiresIn: '30m' },
+    secret: configService.get<string>('USER_JWT_SECRET'),
+  }),
+  inject: [ConfigService],
+};
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    JwtModule.register({
-      signOptions: { expiresIn: '30m' },
-      secret: 'JWT_SECRET',
-    }),
+    JwtModule.registerAsync(jwtFactory),
     GenderModule,
+    IntroModule,
   ],
-  providers: [UsersResolver, UsersService, UserJwtStrategy],
+  providers: [UsersResolver, UsersService, UserJwtStrategy], //strategy in providers
 })
+// @Module({
+//   imports: [
+//     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+//     JwtModule.register({
+//       signOptions: { expiresIn: '30m' },
+//       secret: 'USER_JWT_SECRET',
+//     }),
+//     GenderModule,
+//     IntroModule,
+//   ],
+//   providers: [UsersResolver, UsersService, UserJwtStrategy],
+// })
 export class UsersModule {}

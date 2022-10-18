@@ -3,14 +3,18 @@ import { PassportStrategy } from '@nestjs/passport';
 
 import { Injectable } from '@nestjs/common';
 import { AdminService } from 'src/admin/admin.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy /*, 'jwt'*/) {
-  constructor(private adminService: AdminService) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwtAdmin') {
+  constructor(
+    private adminService: AdminService,
+    private readonly configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), //extracts jwt from auth header
       ignoreExpiration: false, //after expiry time it fails
-      secretOrKey: 'JWT_SECRET',
+      secretOrKey: configService.get<string>('ADMIN_JWT_SECRET'),
     });
   }
 

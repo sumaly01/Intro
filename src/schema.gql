@@ -41,6 +41,7 @@ type CreateUserResponse {
   birthday: Date!
   gender: UserDetailGenderResponse!
   id: ID!
+  interestedIn: UserDetailGenderResponse!
   name: String!
 }
 

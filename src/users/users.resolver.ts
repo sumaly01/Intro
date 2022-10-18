@@ -6,6 +6,8 @@ import { OtpUserResponse } from './dto/otp-user.response';
 import { OtpVerifyResponse } from './dto/otp-verification.response';
 import { OtpInput } from './dto/otp.input';
 import { CreateUserInput } from './dto/create-user.input';
+import { UseGuards } from '@nestjs/common';
+import { UserJwtAuthGuard } from './auth/guard/user.jwt.auth.guard';
 @Resolver()
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
@@ -21,6 +23,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => CreateUserResponse)
+  @UseGuards(UserJwtAuthGuard)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }

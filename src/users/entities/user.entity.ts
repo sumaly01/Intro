@@ -25,9 +25,9 @@ export class User extends mongoose.Document {
   @Field()
   gender?: Gender;
 
-  @Prop({ type: String })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Gender' })
   @Field()
-  interestedIn?: string;
+  interestedIn?: Gender;
 
   @Prop({ type: [{ type: String }] })
   interests?: string[];
@@ -52,6 +52,10 @@ export class User extends mongoose.Document {
   @Prop({ type: Boolean, default: false })
   @Field()
   verifyOtp?: boolean;
+
+  @Prop({ type: String })
+  @Field()
+  access_token?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

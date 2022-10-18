@@ -12,15 +12,8 @@ export class CreateUserResponse {
   birthday: GraphQLDate;
   @Field()
   name: string;
-  // @Field(() => [String])
-  // interests: string[];
   @Field(() => UserDetailGenderResponse)
   gender: UserDetailGenderResponse;
-  //   @Field()
-  //   interestedIn: string;
-  //   @Field()
-  //   interests: string[];
-  //   @Field()
-  //   @IsEmail()
-  //   email: string;
+  @Field(() => UserDetailGenderResponse)
+  interestedIn: UserDetailGenderResponse;
 }

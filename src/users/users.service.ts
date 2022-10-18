@@ -2,10 +2,8 @@ import { Model } from 'mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { OtpInput } from './dto/otp.input';
-// import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { PhoneInput } from './dto/phone.input';
-// import { UserAuthService } from './auth/user.auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from './dto/create-user.input';
 import { GenderService } from 'src/admin/gender/gender.service';
@@ -66,13 +64,13 @@ export class UsersService {
 
     userExists.verifyOtp = true;
 
-    await userExists.save();
-
     const payload = {
       sub: userExists.id,
       phone_number: userExists.phone_number,
     };
     const access_token = await this.generateUserToken(payload);
+    userExists.access_token = access_token;
+    await userExists.save();
 
     return { id: userExists.id, access_token };
   }
@@ -105,8 +103,11 @@ export class UsersService {
     };
     const userUpdate = await this.userModel
       .findByIdAndUpdate({ _id: userExists._id }, { $set: user }, { new: true })
-      .populate([{ path: 'gender', select: { _id: 1, genderName: 1 } }]);
-    // console.log('userupdate', userUpdate);
+      .populate([
+        { path: 'gender', select: { _id: 1, genderName: 1 } },
+        { path: 'interestedIn', select: { _id: 1, genderName: 1 } },
+      ]);
+    console.log('userupdate', userUpdate);
     return userUpdate;
   }
 
