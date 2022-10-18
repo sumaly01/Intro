@@ -9,5 +9,6 @@ import { GenderSchema } from './entities/gender.entity';
     MongooseModule.forFeature([{ name: 'Gender', schema: GenderSchema }]),
   ],
   providers: [GenderResolver, GenderService],
+  exports: [GenderService], //userService
 })
 export class GenderModule {}

@@ -1,14 +1,11 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-// import { User } from './entities/user.entity';
-// import { CreateUserInitialInput } from './dto/create-user-initial.input';
-// import { UpdateUserInput } from './dto/update-user.input';
 import { CreateUserResponse } from './dto/create-user.response';
 import { PhoneInput } from './dto/phone.input';
 import { OtpUserResponse } from './dto/otp-user.response';
 import { OtpVerifyResponse } from './dto/otp-verification.response';
-import { Query } from '@nestjs/common';
 import { OtpInput } from './dto/otp.input';
+import { CreateUserInput } from './dto/create-user.input';
 @Resolver()
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
@@ -20,14 +17,13 @@ export class UsersResolver {
 
   @Mutation(() => OtpVerifyResponse)
   async verifyOtp(@Args('otpInput') otpInput: OtpInput) {
-    const verification = this.usersService.verifyOtp(otpInput);
-    return { otpVerify: verification ? verification : false };
+    return this.usersService.verifyOtp(otpInput);
   }
-  // createUser(
-  //   @Args('createUserInput') createUserInitialInput: CreateUserInitialInput,
-  // ) {
-  //   return this.usersService.create(createUserInitialInput);
-  // }
+
+  @Mutation(() => CreateUserResponse)
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.usersService.create(createUserInput);
+  }
 
   // @Query(() => [User], { name: 'users' })
   // findAll() {

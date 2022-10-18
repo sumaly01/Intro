@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLDate } from 'graphql-iso-date';
+import { UserDetailGenderResponse } from 'src/admin/gender/dto/user.detail.gender.response';
 
 // import { IsEmail } from 'class-validator';
 
@@ -11,8 +12,10 @@ export class CreateUserResponse {
   birthday: GraphQLDate;
   @Field()
   name: string;
-  @Field()
-  gender: string;
+  // @Field(() => [String])
+  // interests: string[];
+  @Field(() => UserDetailGenderResponse)
+  gender: UserDetailGenderResponse;
   //   @Field()
   //   interestedIn: string;
   //   @Field()
