@@ -11,12 +11,14 @@ import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './admin/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { GenderModule } from './admin/gender/gender.module';
+import { IntroModule } from './users/intro/intro.module';
 @Module({
   imports: [
     UsersModule,
     AdminModule,
     AuthModule,
     GenderModule,
+    IntroModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'dev'}`,
       isGlobal: true,

@@ -1,4 +1,4 @@
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AdminLoginResponse } from './dto/admin-login-response';
 import { LoginAdminInput } from './dto/login-admin.input';
@@ -13,12 +13,12 @@ import { CurrentAdmin } from './decorators/current-admin';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Query(() => AdminLoginResponse)
+  @Mutation(() => AdminLoginResponse)
   login(@Args('loginAdminInput') loginAdminInput: LoginAdminInput) {
     return this.authService.login(loginAdminInput);
   }
 
-  @Query(() => ForgetPasswordResponse, { name: 'ForgetPassword' })
+  @Mutation(() => ForgetPasswordResponse, { name: 'ForgetPassword' })
   async forgetPassword(
     @Args('ForgetPasswordInput') forgetPasswordInput: ForgetPasswordInput,
   ) {

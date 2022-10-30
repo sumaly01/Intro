@@ -7,6 +7,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guard/jwt.auth.guard';
 // import { UpdateAdminInput } from './dto/update-admin.input';
+import { CreateUserResponse } from 'src/users/dto/create-user.response';
 
 @Resolver(() => CreateAdminDto)
 export class AdminResolver {
@@ -25,23 +26,9 @@ export class AdminResolver {
     return this.adminService.findAll();
   }
 
-  // @Query(() => CreateAdminDto)
-  // login(@Args('createAdminInput') createAdminInput: CreateAdminInput) {
-  //   return this.adminService.login(createAdminInput);
-  // }
-
-  // @Query(() => Admin, { name: 'admin' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.adminService.findOne(id);
-  // }
-
-  // @Mutation(() => Admin)
-  // updateAdmin(@Args('updateAdminInput') updateAdminInput: UpdateAdminInput) {
-  //   return this.adminService.update(updateAdminInput.id, updateAdminInput);
-  // }
-
-  // @Mutation(() => Admin)
-  // removeAdmin(@Args('id', { type: () => Int }) id: number) {
-  //   return this.adminService.remove(id);
-  // }
+  @Query(() => [CreateUserResponse])
+  @UseGuards(JwtAuthGuard)
+  listUser() {
+    return this.adminService.listUser();
+  }
 }

@@ -6,8 +6,8 @@ export class Admin {
   // @Prop({ required: true })
   // name: string;
 
-  @Prop({ required: true })
   @IsEmail() //not working
+  @Prop({ required: true })
   email: string;
 
   @Prop({ required: true })

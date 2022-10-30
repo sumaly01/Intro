@@ -3,8 +3,8 @@ import { IsEmail } from 'class-validator';
 
 @ObjectType()
 export class Admin {
+  @IsEmail()
   @Field()
-  @IsEmail() //not working
   email: string;
   @Field()
   password: string;

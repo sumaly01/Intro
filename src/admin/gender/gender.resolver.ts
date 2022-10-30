@@ -6,6 +6,7 @@ import { CreateGenderResponse } from './dto/create-gender.response';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
 import { DeleteGenderInput } from './dto/delete-gender.input';
+import { CreateUserResponse } from 'src/users/dto/create-user.response';
 
 @Resolver()
 export class GenderResolver {
@@ -44,5 +45,11 @@ export class GenderResolver {
     @Args('deleteGenderInput') deleteGenderInput: DeleteGenderInput,
   ) {
     return this.genderService.remove(deleteGenderInput);
+  }
+
+  @Mutation(() => [CreateUserResponse])
+  @UseGuards(JwtAuthGuard)
+  searchGenders(@Args('searchGenders') searchGender: string) {
+    return this.genderService.searchUserByGenderSlug(searchGender);
   }
 }

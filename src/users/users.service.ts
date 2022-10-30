@@ -6,12 +6,10 @@ import { User } from './entities/user.entity';
 import { PhoneInput } from './dto/phone.input';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from './dto/create-user.input';
-import { GenderService } from 'src/admin/gender/gender.service';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
-    private genderService: GenderService,
     // private userAuthService: UserAuthService,
     private jwtService: JwtService,
   ) {}
@@ -101,29 +99,29 @@ export class UsersService {
       gender: createUserInput.gender,
       newUser: false,
     };
+
+    const emailFound = await this.userModel.findOne({ email: user.email });
+    if (emailFound) {
+      throw new BadRequestException('Enter valid email');
+    }
     const userUpdate = await this.userModel
       .findByIdAndUpdate({ _id: userExists._id }, { $set: user }, { new: true })
-      .populate([
-        { path: 'gender', select: { _id: 1, genderName: 1 } },
-        { path: 'interestedIn', select: { _id: 1, genderName: 1 } },
-      ]);
+      .populate([{ path: 'gender', select: { _id: 1, genderName: 1 } }]);
     console.log('userupdate', userUpdate);
     return userUpdate;
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
+  async findUserByMultipleGender(genderId: any) {
+    const userExists = await this.userModel
+      .find({ gender: { $in: genderId } }) //for array
+      .populate([{ path: 'gender', select: { genderName: 1 } }]);
+    // console.log({ userExists });
+    return userExists;
+  }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserInput: UpdateUserInput) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async findAll() {
+    return await this.userModel
+      .find()
+      .populate([{ path: 'gender', select: { genderName: 1 } }]);
+  }
 }

@@ -19,29 +19,42 @@ input CreateAdminInput {
 
 input CreateGenderInput {
   genderName: String!
+  order: Float!
+  slugName: GenderSlug!
 }
 
 type CreateGenderResponse {
   genderName: String!
   id: ID!
   isDeleted: Boolean!
+  order: Float!
+  slugName: GenderSlug!
+}
+
+input CreateIntroInput {
+  fileName: String!
+}
+
+type CreateIntroResponse {
+  createdBy: CreateUserResponse!
+  currentIntro: Boolean!
+  filePath: String!
 }
 
 input CreateUserInput {
   birthday: Date!
   email: String!
   gender: String!
-  interestedIn: String!
+  interestedIn: InterestedGender!
   interests: [String!]!
   name: String!
   phone_number: Float!
 }
 
 type CreateUserResponse {
-  birthday: Date!
+  _id: ID!
   gender: UserDetailGenderResponse!
-  id: ID!
-  interestedIn: UserDetailGenderResponse!
+  interestedIn: InterestedGender!
   name: String!
 }
 
@@ -67,6 +80,25 @@ type ForgetPasswordResponse {
 type Gender {
   genderName: String!
   isDeleted: Boolean!
+  order: Float!
+  slugName: String!
+}
+
+enum GenderSlug {
+  BISEXUAL
+  LESBIAN
+  MEN
+  TRANS
+  WOMEN
+}
+
+enum InterestedGender {
+  BISEXUAL
+  EVERYONE
+  LESBIAN
+  MEN
+  TRANS
+  WOMEN
 }
 
 input LoginAdminInput {
@@ -75,14 +107,20 @@ input LoginAdminInput {
 }
 
 type Mutation {
+  ForgetPassword(ForgetPasswordInput: ForgetPasswordInput!): ForgetPasswordResponse!
   ResetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   createAdmin(createAdminInput: CreateAdminInput!): CreateAdminDto!
   createGender(createGenderInput: CreateGenderInput!): CreateGenderResponse!
+  createIntro(createIntro: CreateIntroInput!): CreateIntroResponse!
   createOtp(phoneInput: PhoneInput!): OtpUserResponse!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  listMyIntro: [CreateIntroResponse!]!
+  login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
   removeGender(deleteGenderInput: DeleteGenderInput!): CreateGenderResponse!
+  searchGenders(searchGenders: String!): [CreateUserResponse!]!
   updateGender(updateGenderInput: UpdateGenderInput!): CreateGenderResponse!
   verifyOtp(otpInput: OtpInput!): OtpVerifyResponse!
+  viewIntroFeed: [CreateIntroResponse!]!
 }
 
 input OtpInput {
@@ -107,10 +145,9 @@ input PhoneInput {
 }
 
 type Query {
-  ForgetPassword(ForgetPasswordInput: ForgetPasswordInput!): ForgetPasswordResponse!
   findAll: [CreateAdminDto!]!
   findGenders: [CreateGenderResponse!]!
-  login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
+  listUser: [CreateUserResponse!]!
 }
 
 input ResetPasswordInput {
@@ -123,8 +160,24 @@ type ResetPasswordResponse {
 }
 
 input UpdateGenderInput {
-  genderName: String!
+  genderName: String
   id: ID!
+  order: Float
+  slugName: GenderSlug
+}
+
+type User {
+  access_token: String!
+  birthday: Date!
+  email: String!
+  expiry_time: Date!
+  gender: Gender!
+  interestedIn: String!
+  name: String!
+  newUser: Boolean!
+  otp: Float!
+  phone_number: Float!
+  verifyOtp: Boolean!
 }
 
 type UserDetailGenderResponse {

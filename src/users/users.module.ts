@@ -6,13 +6,11 @@ import { UserSchema } from './entities/user.entity';
 // import { UserAuthModule } from './auth/user.auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UserJwtStrategy } from './auth/strategy/user.jwt.strategy';
-import { GenderModule } from 'src/admin/gender/gender.module';
-import { IntroModule } from './intro/intro.module';
 import { ConfigService } from '@nestjs/config';
 
 const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
-    signOptions: { expiresIn: '30m' },
+    signOptions: { expiresIn: '60m' },
     secret: configService.get<string>('USER_JWT_SECRET'),
   }),
   inject: [ConfigService],
@@ -22,10 +20,11 @@ const jwtFactory = {
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     JwtModule.registerAsync(jwtFactory),
-    GenderModule,
-    IntroModule,
+    // forwardRef(() => GenderModule),
+    // IntroModule,
   ],
   providers: [UsersResolver, UsersService, UserJwtStrategy], //strategy in providers
+  exports: [UsersService], //ingender and intro
 })
 // @Module({
 //   imports: [

@@ -1,19 +1,18 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { GraphQLDate } from 'graphql-iso-date';
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { UserDetailGenderResponse } from 'src/admin/gender/dto/user.detail.gender.response';
+import { InterestedGender } from '../entities/user.entity';
 
-// import { IsEmail } from 'class-validator';
+registerEnumType(InterestedGender, { name: 'InterestedGender' });
 
 @ObjectType()
 export class CreateUserResponse {
   @Field(() => ID)
-  id: string;
-  @Field(() => GraphQLDate)
-  birthday: GraphQLDate;
+  _id: string; //_ added
   @Field()
   name: string;
   @Field(() => UserDetailGenderResponse)
   gender: UserDetailGenderResponse;
-  @Field(() => UserDetailGenderResponse)
-  interestedIn: UserDetailGenderResponse;
+  @Field(() => InterestedGender)
+  interestedIn: InterestedGender;
+  //intro
 }

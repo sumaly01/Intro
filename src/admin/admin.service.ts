@@ -10,15 +10,20 @@ import { CreateAdminInput } from './dto/create-admin.input';
 // import { UpdateAdminInput } from './dto/update-admin.input';
 import { Admin } from './entities/admin.entity';
 import * as bcrypt from 'bcrypt';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class AdminService {
-  constructor(@InjectModel('Admin') private adminModel: Model<Admin>) {}
+  constructor(
+    @InjectModel('Admin') private adminModel: Model<Admin>,
+    private userService: UsersService,
+  ) {}
 
   async create(createAdminInput: CreateAdminInput): Promise<Admin> {
-    const admin = await this.findByEmail(createAdminInput.email);
+    // const admin = await this.findByEmail(createAdminInput.email);
+    const admin = await this.adminModel.find();
 
     if (admin) {
-      throw new BadRequestException('Email already used');
+      throw new BadRequestException('Only one admin is allowed');
     }
     const pw = createAdminInput.password;
     createAdminInput.password = await this.hashPassword(pw);
@@ -55,5 +60,9 @@ export class AdminService {
     admin.password = password;
     await admin.save();
     return true;
+  }
+
+  async listUser() {
+    return await this.userService.findAll();
   }
 }

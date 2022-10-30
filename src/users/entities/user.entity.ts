@@ -6,6 +6,14 @@ import { IsEmail } from 'class-validator';
 import mongoose from 'mongoose';
 import { Gender } from 'src/admin/gender/entities/gender.entity';
 
+export enum InterestedGender {
+  WOMEN = 'women',
+  MEN = 'men',
+  TRANS = 'trans',
+  BISEXUAL = 'bisexual',
+  LESBIAN = 'lesbian',
+  EVERYONE = 'everyone',
+}
 @Schema()
 @ObjectType()
 export class User extends mongoose.Document {
@@ -25,14 +33,18 @@ export class User extends mongoose.Document {
   @Field()
   gender?: Gender;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Gender' })
+  @Prop({
+    type: String,
+    enum: Object.values(InterestedGender),
+    lowercase: true,
+  })
   @Field()
-  interestedIn?: Gender;
+  interestedIn?: string;
 
   @Prop({ type: [{ type: String }] })
   interests?: string[];
 
-  @Prop({ type: String, trim: true })
+  @Prop({ type: String, trim: true, unique: true })
   @Field()
   @IsEmail()
   email?: string;

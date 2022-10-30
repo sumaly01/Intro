@@ -18,7 +18,8 @@ export class sendMail {
         html: `<h3>............RESET YOUR PASSWORD...............</h3>
         <div>
         <p>You can use the link below to reset </p>
-        <button style="background:yellow">http://localhost:3000/user/reset-password?token=${forgetPasswordToken}</button>
+        <button style="background:yellow"><a href="http://localhost:3001/pages/reset-password/reset-password3/${forgetPasswordToken}">Reset password
+        </button>
         </div>
         `,
       });
