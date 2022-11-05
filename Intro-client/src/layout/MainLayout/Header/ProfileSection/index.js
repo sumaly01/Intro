@@ -62,7 +62,7 @@ const ProfileSection = () => {
     const anchorRef = useRef(null);
     const handleLogout = async () => {
         try {
-            await localStorage.setItem('AUTH_TOKEN',null);
+            await localStorage.setItem('AUTH_TOKEN', null);
             window.location.href = '/login';
         } catch (err) {
             console.error(err);
@@ -95,7 +95,9 @@ const ProfileSection = () => {
 
         prevOpen.current = open;
     }, [open]);
-    const { data, loading, error } = useQuery(ADMIN_PROFILE, { context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }})
+    const { data, loading, error } = useQuery(ADMIN_PROFILE, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
     if (loading) return 'Loading...';
     if (error) return <pre>{error.message}</pre>;
 
@@ -121,20 +123,20 @@ const ProfileSection = () => {
                         lineHeight: 0
                     }
                 }}
-                icon={
-                    <Avatar
-                        src={User1}
-                        sx={{
-                            ...theme.typography.mediumAvatar,
-                            margin: '8px 0 8px 8px !important',
-                            cursor: 'pointer'
-                        }}
-                        ref={anchorRef}
-                        aria-controls={open ? 'menu-list-grow' : undefined}
-                        aria-haspopup="true"
-                        color="inherit"
-                    />
-                }
+                // icon={
+                //     <Avatar
+                //         src={User1}
+                //         sx={{
+                //             ...theme.typography.mediumAvatar,
+                //             margin: '8px 0 8px 8px !important',
+                //             cursor: 'pointer'
+                //         }}
+                //         ref={anchorRef}
+                //         aria-controls={open ? 'menu-list-grow' : undefined}
+                //         aria-haspopup="true"
+                //         color="inherit"
+                //     />
+                // }
                 label={<IconSettings stroke={1.5} size="24px" color={theme.palette.primary.main} />}
                 variant="outlined"
                 ref={anchorRef}
@@ -171,12 +173,12 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
+                                                    <Typography variant="h4">Hello</Typography>
                                                     <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {data.AdminProfile.userName}
+                                                        {data.AdminProfile.email}
                                                     </Typography>
                                                 </Stack>
-                                                <Typography variant="subtitle2">Hemisphere Admin</Typography>
+                                                <Typography variant="subtitle2">Intro Admin</Typography>
                                             </Stack>
                                             {/* <OutlinedInput
                                                 sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
@@ -262,7 +264,7 @@ const ProfileSection = () => {
                                                         }
                                                     }}
                                                 >
-                                                    <ListItemButton
+                                                    {/* <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
                                                         onClick={(event) => handleListItemClick(event, 0, '/user/account-profile/profile1')}
@@ -271,7 +273,7 @@ const ProfileSection = () => {
                                                             <IconSettings stroke={1.5} size="20px" />
                                                         </ListItemIcon>
                                                         <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
-                                                    </ListItemButton>
+                                                    </ListItemButton> */}
                                                     {/* <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 1}

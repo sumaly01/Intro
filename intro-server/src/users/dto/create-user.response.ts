@@ -8,7 +8,7 @@ registerEnumType(InterestedGender, { name: 'InterestedGender' });
 export class CreateUserResponse {
   @Field(() => ID)
   _id: string; //_ added
-  @Field()
+  @Field(() => String)
   name: string;
   @Field(() => UserDetailGenderResponse)
   gender: UserDetailGenderResponse;

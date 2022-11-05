@@ -3,11 +3,7 @@ import { GenderSlug } from '../entities/gender.entity';
 
 registerEnumType(GenderSlug, { name: 'GenderSlug' });
 @InputType()
-export class CreateGenderInput {
-  @Field(() => String)
-  genderName: string;
+export class SearchGenderSlugInput {
   @Field(() => GenderSlug)
   slugName: GenderSlug;
-  @Field(() => Number)
-  order: number;
 }

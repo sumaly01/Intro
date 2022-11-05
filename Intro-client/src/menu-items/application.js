@@ -28,47 +28,55 @@ const application = {
     children: [
         {
             id: 'users',
-            title: <FormattedMessage id="users" />,
+            title: <FormattedMessage id="Genders" />,
             type: 'collapse',
             icon: icons.IconUserCheck,
             children: [
                 {
-                    id: 'user-create',
-                    title: <>Add New User</>,
+                    id: 'gender-create',
+                    title: <>Add New Gender</>,
                     type: 'item',
                     icon: icons.IconUserPlus,
-                    url: '/users/add-user'
+                    url: '/genders/add-gender'
                 },
 
                 {
                     id: 'card1',
-                    title: <>Users List</>,
+                    title: <>Genders List</>,
                     type: 'item',
                     icon: icons.IconList,
-                    url: '/users/users-list'
+                    url: '/genders/genders-list'
                 }
+
+                // {
+                //     id: 'card2',
+                //     title: <>Genders Search</>,
+                //     type: 'item',
+                //     icon: icons.IconFind,
+                //     url: '/genders/genders-search'
+                // }
             ]
         },
 
         {
             id: 'projects',
-            title: <FormattedMessage id="Projects" />,
+            title: <FormattedMessage id="Users" />,
             type: 'collapse',
-            icon: icons.IconFiles,
+            icon: icons.IconUserCheck,
             children: [
+                // {
+                //     id: 'project-create',
+                //     title: <>Add New User</>,
+                //     type: 'item',
+                //     icon: icons.IconFilePlus,
+                //     url: '/project/add-project'
+                // },
                 {
-                    id: 'project-create',
-                    title: <>Add New Project</>,
-                    type: 'item',
-                    icon: icons.IconFilePlus,
-                    url: '/project/add-project'
-                },
-                {
-                    id: 'project-listing',
-                    title: <>Projects List</>,
+                    id: 'user-listing',
+                    title: <>Users List</>,
                     type: 'item',
                     icon: icons.IconList,
-                    url: '/project/project-list'
+                    url: '/users/user-list'
                 }
             ]
         }

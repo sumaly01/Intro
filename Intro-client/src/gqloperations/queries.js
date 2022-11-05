@@ -1,16 +1,61 @@
 import { gql } from '@apollo/client';
 
-export const ADMIN_PROFILE =gql`
-query{
-  AdminProfile{
-    _id
-    userName
-    email
-    phone
-    location
-  }
-}
-`
+export const USERS_LIST = gql`
+    query {
+        listUser {
+            _id
+            name
+            gender {
+                genderName
+            }
+            interestedIn
+        }
+    }
+`;
+
+export const GENDERS_LIST = gql`
+    query {
+        findGenders {
+            _id
+            isDeleted
+            genderName
+            order
+            slugName
+        }
+    }
+`;
+
+export const GENDER_BY_ID = gql`
+    query ($id: String!) {
+        findGenderById(id: $id) {
+            _id
+            genderName
+            slugName
+            isDeleted
+            order
+        }
+    }
+`;
+export const ADMIN_PROFILE = gql`
+    query {
+        AdminProfile {
+            _id
+            email
+        }
+    }
+`;
+
+// export const ADMIN_PROFILE = gql`
+//     query {
+//         AdminProfile {
+//             _id
+//             userName
+//             email
+//             phone
+//             location
+//         }
+//     }
+// `;
 
 export const USERS = gql`
     query {
@@ -97,5 +142,3 @@ export const REMOVE_PROJECT = gql`
         }
     }
 `;
-
-

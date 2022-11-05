@@ -8,8 +8,9 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './auth/guard/jwt.auth.guard';
 // import { UpdateAdminInput } from './dto/update-admin.input';
 import { CreateUserResponse } from 'src/users/dto/create-user.response';
+import { CurrentAdmin } from './auth/decorators/current-admin';
 
-@Resolver(() => CreateAdminDto)
+@Resolver()
 export class AdminResolver {
   constructor(private readonly adminService: AdminService) {}
 
@@ -28,7 +29,13 @@ export class AdminResolver {
 
   @Query(() => [CreateUserResponse])
   @UseGuards(JwtAuthGuard)
-  listUser() {
-    return this.adminService.listUser();
+  async listUser() {
+    return await this.adminService.listUser();
+  }
+
+  @Query(() => CreateAdminDto, { name: 'AdminProfile' })
+  @UseGuards(JwtAuthGuard)
+  async myProfile(@CurrentAdmin() currentAdmin: any) {
+    return currentAdmin;
   }
 }

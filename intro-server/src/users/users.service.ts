@@ -10,7 +10,6 @@ import { CreateUserInput } from './dto/create-user.input';
 export class UsersService {
   constructor(
     @InjectModel('User') private userModel: Model<User>,
-    // private userAuthService: UserAuthService,
     private jwtService: JwtService,
   ) {}
 
@@ -56,21 +55,21 @@ export class UsersService {
     }
 
     //check expiry
-    if (userExists.expiry_time - Date.now() < 0) {
+    if (userExists.expiry_time - Date.now() <= 0) {
       throw new BadRequestException('Otp already expired');
     }
 
     userExists.verifyOtp = true;
 
     const payload = {
-      sub: userExists.id,
+      sub: userExists._id,
       phone_number: userExists.phone_number,
     };
     const access_token = await this.generateUserToken(payload);
     userExists.access_token = access_token;
     await userExists.save();
 
-    return { id: userExists.id, access_token };
+    return { _id: userExists._id, access_token };
   }
 
   async findUserById(id: string) {
@@ -82,9 +81,9 @@ export class UsersService {
     return this.jwtService.sign(payload);
   }
 
-  async create(createUserInput: CreateUserInput) {
+  async create(createUserInput: CreateUserInput, currentUser: any) {
     const userExists = await this.userModel.findOne({
-      phone_number: createUserInput.phone_number,
+      phone_number: currentUser.phone_number,
     });
 
     if (!userExists) {
@@ -100,6 +99,11 @@ export class UsersService {
       newUser: false,
     };
 
+    // const checkGender = await this.genderService.findGenderById(user.gender);
+    // if (checkGender.isDeleted) {
+    //   throw new NotFoundException('Gender has already been deleted');
+    // }
+
     const emailFound = await this.userModel.findOne({ email: user.email });
     if (emailFound) {
       throw new BadRequestException('Enter valid email');
@@ -107,7 +111,6 @@ export class UsersService {
     const userUpdate = await this.userModel
       .findByIdAndUpdate({ _id: userExists._id }, { $set: user }, { new: true })
       .populate([{ path: 'gender', select: { _id: 1, genderName: 1 } }]);
-    console.log('userupdate', userUpdate);
     return userUpdate;
   }
 

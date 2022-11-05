@@ -8,7 +8,6 @@ import { AdminService } from '../admin.service';
 import * as bcrypt from 'bcrypt';
 import { Admin } from '../entities/admin.entity';
 import { ForgetPasswordInput } from './dto/forget-password.input';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { sendMail } from './utils/sendEmail';
 import { ResetPasswordInput } from './dto/reset-password.input';
 
@@ -19,15 +18,6 @@ export class AuthService {
     private jwtService: JwtService,
     private sendMail: sendMail,
   ) {}
-
-  //   async validateUser(username: string, pass: string): Promise<any> {
-  //     const user = await this.usersService.findOne(username);
-  //     if (user && user.password === pass) {
-  //       const { password, ...result } = user;
-  //       return result;
-  //     }
-  //     return null;
-  //   }
 
   async login(adminLogin: Admin) {
     //for multiple admins

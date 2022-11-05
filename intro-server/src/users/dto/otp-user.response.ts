@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql';
 @ObjectType()
 export class OtpUserResponse {
   @Field(() => ID)
-  id: string;
+  _id: string;
 
   @Field()
   otp: number;

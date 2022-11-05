@@ -25,7 +25,10 @@ export class UsersResolver {
 
   @Mutation(() => CreateUserResponse)
   @UseGuards(UserJwtAuthGuard)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.usersService.create(createUserInput);
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+    @CurrentUser() currentUser: any,
+  ) {
+    return this.usersService.create(createUserInput, currentUser);
   }
 }

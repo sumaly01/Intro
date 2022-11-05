@@ -8,10 +8,9 @@ import { useTheme } from '@mui/material/styles';
 // project imports
 import { gridSpacing } from 'store/constant';
 import { useQuery } from '@apollo/client';
-import { USER_BY_ID } from 'gqloperations/queries';
-import AddUser from 'views/pages/authentication/auth-forms/AddUser';
+import { USER_BY_ID, GENDER_BY_ID } from 'gqloperations/queries';
 import AuthCardWrapper from 'views/pages/authentication/AuthCardWrapper';
-import EditUser from 'views/pages/authentication/auth-forms/EditUser';
+import EditGender from 'views/pages/authentication/auth-forms/EditGender';
 
 const style = {
     position: 'absolute',
@@ -25,19 +24,18 @@ const style = {
     p: 4
 };
 
-const UserEdit = ({ open, handleCloseModal, selectedId, edit, setEdit }) => {
-    
+const GenderEdit = ({ open, handleCloseModal, selectedId, edit, setEdit }) => {
     const theme = useTheme();
-    const { data, loading, error } = useQuery(USER_BY_ID, {
+    const { data, loading, error } = useQuery(GENDER_BY_ID, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } },
         variables: {
             id: selectedId
         }
-    },
-    );
-    console.log("data from userByID=>",data)
-    if (loading) return 'Loading...';
-    
+    });
 
+    console.log('data from userByID=>', data);
+    if (loading) return 'Loading...';
+    if (error) return <pre>{error.message}</pre>;
     return (
         <Modal
             open={open}
@@ -58,7 +56,7 @@ const UserEdit = ({ open, handleCloseModal, selectedId, edit, setEdit }) => {
                                 <Grid item>
                                     <Stack alignItems="center" justifyContent="center">
                                         <Typography color={theme.palette.secondary.main} gutterBottom>
-                                            Edit User
+                                            Edit Gender
                                         </Typography>
                                     </Stack>
                                 </Grid>
@@ -66,7 +64,7 @@ const UserEdit = ({ open, handleCloseModal, selectedId, edit, setEdit }) => {
                                     <AuthCardWrapper sx={style}>
                                         <Grid container spacing={2} alignItems="center" justifyContent="center">
                                             <Grid item xs={12}>
-                                                <EditUser edit={edit} editData={data} handleCloseModal={handleCloseModal} />
+                                                <EditGender edit={edit} editData={data} handleCloseModal={handleCloseModal} />
                                             </Grid>
                                         </Grid>
                                     </AuthCardWrapper>
@@ -80,10 +78,10 @@ const UserEdit = ({ open, handleCloseModal, selectedId, edit, setEdit }) => {
     );
 };
 
-UserEdit.propTypes = {
+GenderEdit.propTypes = {
     open: PropTypes.bool,
     handleCloseModal: PropTypes.func,
     selectedId: PropTypes.string
 };
 
-export default UserEdit;
+export default GenderEdit;

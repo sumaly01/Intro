@@ -20,17 +20,17 @@ import {
     Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import {concat,ApolloLink, useMutation, HttpLink, ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
+import { concat, ApolloLink, useMutation, HttpLink, ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import UserEdit from './UserEditModal';
-import { USERS } from 'gqloperations/queries';
-import { REMOVE_USER } from 'gqloperations/mutations';
+import { USERS_LIST, PROJECTS } from 'gqloperations/queries';
+import { REMOVE_PROJECT } from 'gqloperations/mutations';
 
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import ProjectEdit from './ProjectEditModal';
 
 // table sort
 function descendingComparator(a, b, orderBy) {
@@ -47,7 +47,7 @@ const getComparator = (order, orderBy) =>
     order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
 function stableSort(array, comparator) {
-    const stabilizedThis = array?.map((el, index) => [el, index]);
+    const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
         if (order !== 0) return order;
@@ -65,69 +65,48 @@ const headCells = [
         align: 'left'
     },
     {
-        id: 'username',
-        numeric: true,
-        label: 'Username',
-        align: 'left'
-    },
-    {
-        id: 'email',
-        numeric: true,
-        label: 'Email Address',
-        align: 'center'
-    },
-    {
-        id: 'userType',
-        numeric: true,
-        label: 'User Type',
-        align: 'center'
-    },
-    {
-        id: 'companyName',
+        id: 'genderName',
         numeric: false,
-        label: 'Company Name',
+        label: 'Gender',
         align: 'center'
     },
     {
-        id: 'phone',
+        id: 'interestedIn',
         numeric: false,
-        label: 'Phone Number',
+        label: 'Interested In',
         align: 'center'
     }
 ];
 
 // ==============================|| TABLE HEADER ||============================== //
 
-
-
 function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, selected }) {
-   
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
 
-    const [removeData] = useMutation(REMOVE_USER, {
+    const [removeData] = useMutation(REMOVE_PROJECT, {
         variables: {
-            id: selected.toString()
+            id: selected.toString(),
+            confirmDelete: true
         }
     });
 
     const handleRemove = async () => {
         await removeData().then(
             () => {
-                window.location.href = '/users/users-list';
+                window.location.href = '/users/user-list';
             },
             (err) => {
                 console.log(err);
             }
         );
     };
-
     return (
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox" sx={{ pl: 3 }}>
-                    <Checkbox
+                    {/* <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={rowCount > 0 && numSelected === rowCount}
@@ -135,7 +114,7 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
                         inputProps={{
                             'aria-label': 'select all desserts'
                         }}
-                    />
+                    /> */}
                 </TableCell>
                 {numSelected > 0 && (
                     <TableCell padding="none" colSpan={6}>
@@ -164,11 +143,11 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
                             </TableSortLabel>
                         </TableCell>
                     ))}
-                {numSelected <= 0 && (
-                    <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
-                        Action
-                    </TableCell>
-                )}
+                {/* {numSelected <= 0 && (
+                    // <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
+                    //     Action
+                    // </TableCell>
+                )} */}
             </TableRow>
         </TableHead>
     );
@@ -222,9 +201,11 @@ EnhancedTableToolbar.propTypes = {
     handleRemove: PropTypes.func
 };
 
-
-const UsersList = () => {
-
+const UserList = () => {
+    const { data, loading, error } = useQuery(USERS_LIST, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
+    console.log('data from prj', data);
     const theme = useTheme();
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('calories');
@@ -232,7 +213,6 @@ const UsersList = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [search, setSearch] = useState('');
-    const { data, loading, error } = useQuery(USERS, { context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }})   
     const [rows, setRows] = useState();
     const [selectedId, setSelectedId] = useState('');
     // open modal to edit review
@@ -244,19 +224,13 @@ const UsersList = () => {
         setOpen(false);
     };
 
-    // const handleEditState =()=>{
-    //     setEdit(true);
-    //     setOpen(true);
-    // }
-   
-
-    console.log("datas=>",data);
     useEffect(() => {
-        console.log("datas=>",data)
-        const userList = data?.listApplicationusers.map((items) => items);
-        console.log("user list=>", userList);
+        const userList = data?.listUser.map((items) => items);
         setRows(userList);
+
+        console.log('data from users=>', data);
     }, [data]);
+    console.log('rows=>', rows);
 
     if (loading) return 'Loading...';
     if (error) return <pre>{error.message}</pre>;
@@ -269,7 +243,7 @@ const UsersList = () => {
             const newRows = rows.filter((row) => {
                 let matches = true;
 
-                const properties = ['name', 'email', 'location', 'orders'];
+                const properties = ['name', 'genderName', 'interestedIn'];
                 let containsQuery = false;
 
                 properties.forEach((property) => {
@@ -285,7 +259,7 @@ const UsersList = () => {
             });
             setRows(newRows);
         } else {
-            // setRows(userList);
+            // setRows(UserList);
         }
     };
 
@@ -303,10 +277,9 @@ const UsersList = () => {
         }
         setSelected([]);
     };
-
     const handleClick = (event, name) => {
-
         const selectedIndex = selected.indexOf(name);
+
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -359,67 +332,63 @@ const UsersList = () => {
                                         if (typeof row === 'number') return null;
                                         const isItemSelected = isSelected(row._id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
-
                                         return (
-                                            <>
-                                                <TableRow
-                                                    hover
-                                                    role="checkbox"
-                                                    aria-checked={isItemSelected}
-                                                    tabIndex={-1}
-                                                    key={index}
-                                                    selected={isItemSelected}
+                                            <TableRow
+                                                hover
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={index}
+                                                selected={isItemSelected}
+                                            >
+                                                <TableCell
+                                                    padding="checkbox"
+                                                    sx={{ pl: 3 }}
+                                                    // onClick={(event) => handleClick(event, row._id)}
                                                 >
-                                                    <TableCell
-                                                        padding="checkbox"
-                                                        sx={{ pl: 3 }}
-                                                        onClick={(event) => handleClick(event, row._id)}
+                                                    {/* <Checkbox
+                                                        color="primary"
+                                                        checked={isItemSelected}
+                                                        inputProps={{
+                                                            'aria-labelledby': labelId
+                                                        }}
+                                                    /> */}
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    // onClick={(event) => handleClick(event, row.name)}
+                                                    sx={{ cursor: 'pointer' }}
+                                                >
+                                                    <Typography
+                                                        variant="subtitle1"
+                                                        sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}
                                                     >
-                                                        <Checkbox
-                                                            color="primary"
-                                                            checked={isItemSelected}
-                                                            inputProps={{
-                                                                'aria-labelledby': labelId
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell
-                                                        component="th"
-                                                        id={labelId}
-                                                        scope="row"
-                                                        onClick={(event) => handleClick(event, row.name)}
-                                                        sx={{ cursor: 'pointer' }}
-                                                    >
-                                                        <Typography
-                                                            variant="subtitle1"
-                                                            sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}
-                                                        >
-                                                            {' '}
-                                                            {row.name}{' '}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell>{row.username} </TableCell>
-                                                    <TableCell align="center">{row.email}</TableCell>
-                                                    <TableCell align="center">{row.userType}</TableCell>
-                                                    <TableCell align="center">{row.companyName}</TableCell>
-                                                    <TableCell align="center">{row.phone}</TableCell>
-                                                    <TableCell align="center" sx={{ pr: 3 }}>
-                                                        <IconButton
-                                                            color="secondary"
-                                                            size="large"
+                                                        {' '}
+                                                        {row.name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center">{row.gender.genderName}</TableCell>
+                                                {/* <TableCell align="right">{row.startDate.substring(0, 10)}</TableCell>
+                                                <TableCell align="center">{row.endDate.substring(0, 10)}</TableCell> */}
+                                                <TableCell align="center">{row.interestedIn}</TableCell>
+
+                                                {/* <TableCell align="center">
+                                                    {row.users ? row.users.map((item) => item.name).toString() : '-'}
+                                                </TableCell> */}
+                                                {/* <TableCell align="center" sx={{ pr: 3 }}>
+                                                    <IconButton color="secondary" size="large">
+                                                        <EditTwoToneIcon
+                                                            sx={{ fontSize: '1.3rem' }}
                                                             onClick={(e) => {
                                                                 setSelectedId(row._id);
                                                                 setOpen(true);
-                                                                setEdit(true);
-                                                                console.log("event edt button=>",e)
-                                                                
                                                             }}
-                                                        >
-                                                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </>
+                                                        />
+                                                    </IconButton>
+                                                </TableCell> */}
+                                            </TableRow>
                                         );
                                     })}
                                 {emptyRows > 0 && (
@@ -433,11 +402,15 @@ const UsersList = () => {
                                 )}
                             </TableBody>
                         </Table>
-
-                        {edit && open && (<UserEdit open={open} handleCloseModal={handleCloseModal} selectedId={selectedId} edit={edit} setEdit={setEdit} />)}
+                        {/* <ProjectEdit
+                            open={open}
+                            handleCloseModal={handleCloseModal}
+                            selectedId={selectedId}
+                            edit={edit}
+                            setEdit={setEdit}
+                        /> */}
                     </TableContainer>
 
-                    {/* table pagination */}
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
@@ -453,4 +426,4 @@ const UsersList = () => {
     );
 };
 
-export default UsersList;
+export default UserList;

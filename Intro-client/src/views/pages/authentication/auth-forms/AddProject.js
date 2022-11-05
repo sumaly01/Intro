@@ -11,7 +11,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import { useMutation,ApolloLink,concat, HttpLink, ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
+import { useMutation, ApolloLink, concat, HttpLink, ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
@@ -38,7 +38,7 @@ const AddProject = () => {
         operation.setContext(({ headers = {} }) => ({
             headers: {
                 ...headers,
-                authorization:`Bearer ${localStorage.getItem('AUTH_TOKEN')}`|| null
+                authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` || null
             }
         }));
 
@@ -54,7 +54,9 @@ const AddProject = () => {
     const [valueBasicEnd, setValueBasicEnd] = useState(new Date());
     const scriptedRef = useScriptRef();
     // const [createProject] = useMutation(CREATE_PROJECT);
-    const { data, loading, error } = useQuery(USERS, { context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }})
+    const { data, loading, error } = useQuery(USERS, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
     if (loading) return 'Loading...';
     if (error) return <pre>{error.message}</pre>;
 
@@ -64,7 +66,7 @@ const AddProject = () => {
     const handleSelect = (selected) => {
         const matchID = users.filter((element) => selected.some((e) => element._id === e));
         const result = matchID.map((a) => a.name);
-        console.log("ids=>",result)
+        console.log('ids=>', result);
         return result;
     };
 
@@ -107,7 +109,7 @@ const AddProject = () => {
                             })
                             .then(
                                 () => {
-                                    window.location.href = '/project/project-list';
+                                    window.location.href = '/users/user-list';
                                 },
                                 (err) => {
                                     if (scriptedRef.current) {

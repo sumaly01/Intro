@@ -71,6 +71,9 @@ const FirebaseLogin = ({ loginProp }) => {
     const { data, loading, error } = useMutation(LOGIN);
     if (loading) return 'Loading...';
     if (error) return <pre>{error.message}</pre>;
+    if (data) {
+        console.log('data from', data);
+    }
     return (
         <>
             <Grid container direction="column" justifyContent="center" spacing={2}>

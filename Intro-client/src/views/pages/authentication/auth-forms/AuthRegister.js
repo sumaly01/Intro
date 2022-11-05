@@ -64,7 +64,7 @@ const FirebaseRegister = () => {
     const CREATE_ADMIN = gql`
         mutation ($email: String!, $password: String!) {
             createAdmin(createAdminInput: { email: $email, password: $password }) {
-                id
+                _id
                 email
             }
         }

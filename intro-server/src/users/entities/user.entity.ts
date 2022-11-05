@@ -12,7 +12,20 @@ export enum InterestedGender {
   TRANS = 'trans',
   BISEXUAL = 'bisexual',
   LESBIAN = 'lesbian',
+  GAY = 'gay',
   EVERYONE = 'everyone',
+}
+
+export enum Interests {
+  DANCE = 'dance',
+  SING = 'sing',
+  MUSIC = 'music',
+  HIKE = 'hike',
+  TRAVEL = 'travel',
+  COOK = 'cook',
+  READ_BOOKS = 'read books',
+  SKETCH = 'sketch',
+  CYCLING = 'cycling',
 }
 @Schema()
 @ObjectType()
@@ -41,7 +54,12 @@ export class User extends mongoose.Document {
   @Field()
   interestedIn?: string;
 
-  @Prop({ type: [{ type: String }] })
+  // @Prop({ type: [{ type: String, lowercase: true }] })
+  // interests?: string[];
+
+  @Prop({
+    type: [{ type: String, enum: Object.values(Interests), lowercase: true }],
+  })
   interests?: string[];
 
   @Prop({ type: String, trim: true, unique: true })

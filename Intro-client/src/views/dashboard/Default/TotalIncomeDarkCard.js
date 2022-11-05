@@ -8,14 +8,12 @@ import { useQuery } from '@apollo/client';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
-import { USERS } from 'gqloperations/queries';
+import { USERS_LIST } from 'gqloperations/queries';
 
 // assets
 import GroupIcon from '@mui/icons-material/Group';
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.primary.light,
     overflow: 'hidden',
     position: 'relative',
     '&:after': {
@@ -45,12 +43,15 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 const TotalIncomeDarkCard = ({ isLoading }) => {
     const theme = useTheme();
     const [rows, setRows] = useState();
-    const { data, loading, error } = useQuery(USERS, { context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }}) 
+    const { data, loading, error } = useQuery(USERS_LIST, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
 
     useEffect(() => {
-        console.log("dashbord=>",data)
-        const userList = data?.listApplicationusers.map((items) => items);
+        console.log('dashboard=>', data);
+        const userList = data?.listUser.map((items) => items);
         setRows(userList);
+        console.log({ rows });
     }, [data]);
 
     if (loading) return 'Loading...';
@@ -72,8 +73,10 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                                             sx={{
                                                 ...theme.typography.commonAvatar,
                                                 ...theme.typography.largeAvatar,
-                                                backgroundColor: theme.palette.primary[800],
-                                                color: '#fff'
+                                                backgroundColor:
+                                                    theme.palette.mode === 'dark' ? theme.palette.dark.main : theme.palette.warning.light,
+                                                color:
+                                                    theme.palette.mode === 'dark' ? theme.palette.warning.dark : theme.palette.warning.dark
                                             }}
                                         >
                                             <GroupIcon fontSize="inherit" />
@@ -85,14 +88,10 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                                             mt: 0.45,
                                             mb: 0.45
                                         }}
-                                        primary={
-                                            <Typography variant="h4" sx={{ color: '#fff' }}>
-                                                {rows.length}
-                                            </Typography>
-                                        }
+                                        primary={<Typography variant="h4">{rows.length}</Typography>}
                                         secondary={
-                                            <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                                                Total Application Users
+                                            <Typography variant="subtitle2" sx={{ color: theme.palette.grey[500], mt: 0.5 }}>
+                                                Total Intro Users
                                             </Typography>
                                         }
                                     />

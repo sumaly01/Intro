@@ -5,7 +5,7 @@ registerEnumType(GenderSlug, { name: 'GenderSlug' });
 @ObjectType()
 export class CreateGenderResponse {
   @Field(() => ID)
-  id: string;
+  _id: string;
   @Field()
   genderName: string;
   @Field()

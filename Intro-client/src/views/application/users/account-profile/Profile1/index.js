@@ -49,12 +49,11 @@ const tabsOption = [
     {
         label: 'Profile',
         icon: <AccountCircleTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
-        label: 'Personal Details',
-        icon: <DescriptionTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-  
+    }
+    // {
+    //     label: 'Personal Details',
+    //     icon: <DescriptionTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+    // }
 ];
 
 // ==============================|| PROFILE 1 ||============================== //

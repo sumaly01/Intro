@@ -6,7 +6,7 @@ export class OtpVerifyResponse {
   // verifyOtp: boolean;
 
   @Field(() => ID)
-  id: string;
+  _id: string;
 
   @Field()
   access_token: string;

@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { useTheme, styled } from '@mui/material/styles';
 import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
-// project imports
+// gender imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
-import { PROJECTS } from 'gqloperations/queries';
+import { GENDERS_LIST } from 'gqloperations/queries';
 import { useEffect, useState } from 'react';
 
 // assets
@@ -45,11 +45,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 const TotalIncomeLightCard = ({ isLoading }) => {
     const theme = useTheme();
     const [rows, setRows] = useState();
-    const { data, loading, error } = useQuery(PROJECTS, { context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }})
+    const { data, loading, error } = useQuery(GENDERS_LIST, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
 
     useEffect(() => {
-        const projectList = data?.list_projects.map((items) => items);
-        setRows(projectList);
+        const genderList = data?.findGenders.map((items) => items);
+        setRows(genderList);
     }, [data]);
 
     if (loading) return 'Loading...';
@@ -95,7 +97,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                                     mt: 0.5
                                                 }}
                                             >
-                                                Total Projects
+                                                Total Genders
                                             </Typography>
                                         }
                                     />

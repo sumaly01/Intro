@@ -1,5 +1,51 @@
 import { gql } from '@apollo/client';
 
+export const CREATE_GENDER = gql`
+    mutation ($genderName: String!, $slugName: GenderSlug!, $order: Float!) {
+        createGender(createGenderInput: { genderName: $genderName, slugName: $slugName, order: $order }) {
+            _id
+            genderName
+            slugName
+            isDeleted
+            order
+        }
+    }
+`;
+
+export const UPDATE_GENDER = gql`
+    mutation ($_id: ID!, $genderName: String!, $slugName: GenderSlug!, $order: Float!) {
+        updateGender(updateGenderInput: { _id: $_id, genderName: $genderName, slugName: $slugName, order: $order }) {
+            _id
+            genderName
+            isDeleted
+            order
+            slugName
+        }
+    }
+`;
+
+export const DELETE_GENDER = gql`
+    mutation ($_id: ID!) {
+        removeGender(id: { _id: $_id }) {
+            _id
+            isDeleted
+            genderName
+        }
+    }
+`;
+
+export const SEARCH_GENDER = gql`
+    mutation ($searchGenders: String!) {
+        searchGenders(searchGenders: $searchGenders) {
+            _id
+            name
+            interestedIn
+            gender {
+                genderName
+            }
+        }
+    }
+`;
 export const CREATE_PROJECT = gql`
     mutation ($projectName: String!, $description: String!, $startDate: DateTime!, $endDate: DateTime!, $users: [ID!]!) {
         createProject(
@@ -129,7 +175,6 @@ export const REMOVE_PROJECT = gql`
             description
             startDate
             endDate
-            
         }
     }
 `;

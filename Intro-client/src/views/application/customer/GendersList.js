@@ -24,13 +24,13 @@ import { concat, ApolloLink, useMutation, HttpLink, ApolloClient, InMemoryCache,
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { PROJECTS } from 'gqloperations/queries';
-import { REMOVE_PROJECT } from 'gqloperations/mutations';
+import GenderEdit from './GenderEditModal';
+import { USERS, GENDERS_LIST } from 'gqloperations/queries';
+import { REMOVE_USER, DELETE_GENDER } from 'gqloperations/mutations';
 
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import ProjectEdit from './ProjectEditModal';
 
 // table sort
 function descendingComparator(a, b, orderBy) {
@@ -47,7 +47,7 @@ const getComparator = (order, orderBy) =>
     order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 
 function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
+    const stabilizedThis = array?.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
         if (order !== 0) return order;
@@ -59,40 +59,28 @@ function stableSort(array, comparator) {
 // table header options
 const headCells = [
     {
-        id: 'name',
+        id: 'genderName',
         numeric: false,
-        label: 'Project Name',
+        label: 'Gender Name',
         align: 'left'
     },
     {
-        id: 'Description',
-        numeric: true,
-        label: 'Description',
-        align: 'left'
-    },
-    {
-        id: 'startDate',
-        numeric: true,
-        label: 'Start Date',
-        align: 'center'
-    },
-    {
-        id: 'endDate',
-        numeric: true,
-        label: 'End Date',
-        align: 'center'
-    },
-    {
-        id: 'total assignee',
-        numeric: true,
-        label: 'Total Assignee',
-        align: 'center'
-    },
-
-    {
-        id: 'users',
+        id: 'slugName',
         numeric: false,
-        label: 'Assigned Users',
+        label: 'Slug Name',
+        align: 'center'
+    },
+    {
+        id: 'isDeleted',
+        numeric: false,
+        // boolean: true,
+        label: 'Deleted',
+        align: 'center'
+    },
+    {
+        id: 'order',
+        numeric: true,
+        label: 'Order',
         align: 'center'
     }
 ];
@@ -103,23 +91,36 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
+    // console.log('type', typeof selected[0]);
+    // const selectedId = selected[0];
+    const [removeData] = useMutation(DELETE_GENDER, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } },
 
-    const [removeData] = useMutation(REMOVE_PROJECT, {
         variables: {
-            id: selected.toString()
+            _id: selected.toString()
         }
     });
 
     const handleRemove = async () => {
-        await removeData().then(
-            () => {
-                window.location.href = '/project/project-list';
-            },
-            (err) => {
-                console.log(err);
-            }
-        );
+        await removeData()
+            .then(
+                (data) => {
+                    // if (data.removeGender.isDeleted) {
+                    //     throw new Error('Already deleted');
+                    // }
+                    // window.location.href = '/genders/genders-list';
+                },
+                (err) => {
+                    console.log('error', err);
+                    return err.message;
+                }
+            )
+            .catch((err) => {
+                console.log({ err });
+                return err.message;
+            });
     };
+
     return (
         <TableHead>
             <TableRow>
@@ -200,7 +201,7 @@ const EnhancedTableToolbar = ({ numSelected, handleRemove }) => (
             </Typography>
         ) : (
             <Typography variant="h6" id="tableTitle">
-                Nutrition
+                Gender
             </Typography>
         )}
         <Box sx={{ flexGrow: 1 }} />
@@ -219,10 +220,7 @@ EnhancedTableToolbar.propTypes = {
     handleRemove: PropTypes.func
 };
 
-const ProjectList = () => {
-    const { data, loading, error } = useQuery(PROJECTS, {
-        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
-    });
+const GendersList = () => {
     const theme = useTheme();
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('calories');
@@ -230,6 +228,9 @@ const ProjectList = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [search, setSearch] = useState('');
+    const { data, loading, error } = useQuery(GENDERS_LIST, {
+        context: { headers: { authorization: `Bearer ${localStorage.getItem('AUTH_TOKEN')}` } }
+    });
     const [rows, setRows] = useState();
     const [selectedId, setSelectedId] = useState('');
     // open modal to edit review
@@ -241,13 +242,18 @@ const ProjectList = () => {
         setOpen(false);
     };
 
-    useEffect(() => {
-        const projectList = data?.list_projects.map((items) => items);
-        setRows(projectList);
+    // const handleEditState =()=>{
+    //     setEdit(true);
+    //     setOpen(true);
+    // }
 
-        console.log('data from projects=>', data);
+    console.log('datas=>', data);
+    useEffect(() => {
+        console.log('datas=>', data);
+        const genderList = data?.findGenders.map((items) => items);
+        console.log('gender list=>', genderList);
+        setRows(genderList);
     }, [data]);
-    console.log('rows=>', rows);
 
     if (loading) return 'Loading...';
     if (error) return <pre>{error.message}</pre>;
@@ -260,7 +266,9 @@ const ProjectList = () => {
             const newRows = rows.filter((row) => {
                 let matches = true;
 
-                const properties = ['name', 'email', 'location', 'orders'];
+                // const properties = ['name', 'email', 'location', 'orders'];
+                const properties = ['genderName', 'slugName', 'isDeleted', 'order'];
+
                 let containsQuery = false;
 
                 properties.forEach((property) => {
@@ -276,7 +284,7 @@ const ProjectList = () => {
             });
             setRows(newRows);
         } else {
-            // setRows(projectList);
+            // setRows(userList);
         }
     };
 
@@ -294,9 +302,9 @@ const ProjectList = () => {
         }
         setSelected([]);
     };
+
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
-
         let newSelected = [];
 
         if (selectedIndex === -1) {
@@ -346,68 +354,72 @@ const ProjectList = () => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
                                         /** Make sure no display bugs if row isn't an OrderData object */
+                                        console.log('deleted', row.isDeleted);
                                         if (typeof row === 'number') return null;
                                         const isItemSelected = isSelected(row._id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
-                                        return (
-                                            <TableRow
-                                                hover
-                                                role="checkbox"
-                                                aria-checked={isItemSelected}
-                                                tabIndex={-1}
-                                                key={index}
-                                                selected={isItemSelected}
-                                            >
-                                                <TableCell
-                                                    padding="checkbox"
-                                                    sx={{ pl: 3 }}
-                                                    onClick={(event) => handleClick(event, row._id)}
-                                                >
-                                                    <Checkbox
-                                                        color="primary"
-                                                        checked={isItemSelected}
-                                                        inputProps={{
-                                                            'aria-labelledby': labelId
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                                <TableCell
-                                                    component="th"
-                                                    id={labelId}
-                                                    scope="row"
-                                                    onClick={(event) => handleClick(event, row.username)}
-                                                    sx={{ cursor: 'pointer' }}
-                                                >
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                        sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}
-                                                    >
-                                                        {' '}
-                                                        {row.projectName}{' '}
-                                                    </Typography>
-                                                </TableCell>
-                                                <TableCell>{row.description} </TableCell>
-                                                <TableCell align="right">{row.startDate.substring(0, 10)}</TableCell>
-                                                <TableCell align="center">{row.endDate.substring(0, 10)}</TableCell>
-                                                <TableCell align="center">
-                                                {row.totalAssignedUser}
-                                                </TableCell>
 
-                                                <TableCell align="center">
-                                                     {row.users ? row.users.map((item) => item.username).toString() : '-'}
-                                                </TableCell>
-                                                <TableCell align="center" sx={{ pr: 3 }}>
-                                                    <IconButton color="secondary" size="large">
-                                                        <EditTwoToneIcon
-                                                            sx={{ fontSize: '1.3rem' }}
-                                                            onClick={(e) => {
-                                                                setSelectedId(row._id);
-                                                                setOpen(true); 
+                                        return (
+                                            <>
+                                                <TableRow
+                                                    hover
+                                                    role="checkbox"
+                                                    aria-checked={isItemSelected}
+                                                    tabIndex={-1}
+                                                    key={index}
+                                                    selected={isItemSelected}
+                                                >
+                                                    <TableCell
+                                                        padding="checkbox"
+                                                        sx={{ pl: 3 }}
+                                                        onClick={(event) => handleClick(event, row._id)}
+                                                    >
+                                                        <Checkbox
+                                                            color="primary"
+                                                            checked={isItemSelected}
+                                                            inputProps={{
+                                                                'aria-labelledby': labelId
                                                             }}
                                                         />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
+                                                    </TableCell>
+                                                    <TableCell
+                                                        component="th"
+                                                        id={labelId}
+                                                        scope="row"
+                                                        onClick={(event) => handleClick(event, row.genderName)}
+                                                        sx={{ cursor: 'pointer' }}
+                                                    >
+                                                        <Typography
+                                                            variant="subtitle1"
+                                                            sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}
+                                                        >
+                                                            {'     '}
+                                                            {row.genderName}{' '}
+                                                        </Typography>
+                                                    </TableCell>
+                                                    {/* <TableCell>{row.genderName} </TableCell> */}
+                                                    <TableCell align="center">{row.slugName}</TableCell>
+                                                    <TableCell align="center">{row.isDeleted.toString()}</TableCell>
+                                                    <TableCell align="center">{row.order}</TableCell>
+                                                    {/* <TableCell align="center">{row.phone}</TableCell> */}
+                                                    <TableCell align="center" sx={{ pr: 3 }}>
+                                                        <IconButton
+                                                            color="secondary"
+                                                            size="large"
+                                                            onClick={(e) => {
+                                                                setSelectedId(row._id);
+                                                                setOpen(true);
+                                                                setEdit(true);
+                                                                // console.log('event edt button=>', e);
+                                                                console.log('selectedID', selectedId);
+                                                                console.log('id', row._id);
+                                                            }}
+                                                        >
+                                                            <EditTwoToneIcon sx={{ fontSize: '1.3rem' }} />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </>
                                         );
                                     })}
                                 {emptyRows > 0 && (
@@ -421,15 +433,19 @@ const ProjectList = () => {
                                 )}
                             </TableBody>
                         </Table>
-                        <ProjectEdit
-                            open={open}
-                            handleCloseModal={handleCloseModal}
-                            selectedId={selectedId}
-                            edit={edit}
-                            setEdit={setEdit}
-                        />
+
+                        {edit && open && (
+                            <GenderEdit
+                                open={open}
+                                handleCloseModal={handleCloseModal}
+                                selectedId={selectedId}
+                                edit={edit}
+                                setEdit={setEdit}
+                            />
+                        )}
                     </TableContainer>
 
+                    {/* table pagination */}
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
@@ -445,4 +461,4 @@ const ProjectList = () => {
     );
 };
 
-export default ProjectList;
+export default GendersList;

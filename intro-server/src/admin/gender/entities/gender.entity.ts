@@ -8,6 +8,7 @@ export enum GenderSlug {
   TRANS = 'trans',
   BISEXUAL = 'bisexual',
   LESBIAN = 'lesbian',
+  GAY = 'gay',
 }
 @Schema()
 @ObjectType()

@@ -7,14 +7,14 @@ import { Divider, Grid, Stack, Typography, useMediaQuery } from '@mui/material';
 // project imports
 import AuthWrapper1 from 'views/pages/authentication/AuthWrapper1';
 import AuthCardWrapper from 'views/pages/authentication/AuthCardWrapper';
-import AddUser from 'views/pages/authentication/auth-forms/AddUser';
+import AddGender from 'views/pages/authentication/auth-forms/AddGender';
 import AuthFooter from 'ui-component/cards/AuthFooter';
 import { gridSpacing } from 'store/constant';
 // project imports
 
 // ==============================|| Sticky ActionBar ||============================== //
 
-function AddUserForm() {
+function AddGenderForm() {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     return (
@@ -39,14 +39,14 @@ function AddUserForm() {
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
                                                     >
-                                                        Add New User
+                                                        Add New Gender
                                                     </Typography>
                                                 </Stack>
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <AddUser />
+                                        <AddGender />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Divider />
@@ -64,4 +64,4 @@ function AddUserForm() {
     );
 }
 
-export default AddUserForm;
+export default AddGenderForm;

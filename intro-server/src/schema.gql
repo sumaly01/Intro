@@ -8,8 +8,8 @@ type AdminLoginResponse {
 }
 
 type CreateAdminDto {
+  _id: ID!
   email: String!
-  id: ID!
 }
 
 input CreateAdminInput {
@@ -24,8 +24,8 @@ input CreateGenderInput {
 }
 
 type CreateGenderResponse {
+  _id: ID!
   genderName: String!
-  id: ID!
   isDeleted: Boolean!
   order: Float!
   slugName: GenderSlug!
@@ -46,9 +46,8 @@ input CreateUserInput {
   email: String!
   gender: String!
   interestedIn: InterestedGender!
-  interests: [String!]!
+  interests: [Interests!]!
   name: String!
-  phone_number: Float!
 }
 
 type CreateUserResponse {
@@ -64,8 +63,7 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 scalar Date
 
 input DeleteGenderInput {
-  confirmDelete: Boolean!
-  id: ID!
+  _id: ID!
 }
 
 input ForgetPasswordInput {
@@ -86,6 +84,7 @@ type Gender {
 
 enum GenderSlug {
   BISEXUAL
+  GAY
   LESBIAN
   MEN
   TRANS
@@ -95,10 +94,23 @@ enum GenderSlug {
 enum InterestedGender {
   BISEXUAL
   EVERYONE
+  GAY
   LESBIAN
   MEN
   TRANS
   WOMEN
+}
+
+enum Interests {
+  COOK
+  CYCLING
+  DANCE
+  HIKE
+  MUSIC
+  READ_BOOKS
+  SING
+  SKETCH
+  TRAVEL
 }
 
 input LoginAdminInput {
@@ -116,8 +128,8 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
   listMyIntro: [CreateIntroResponse!]!
   login(loginAdminInput: LoginAdminInput!): AdminLoginResponse!
-  removeGender(deleteGenderInput: DeleteGenderInput!): CreateGenderResponse!
-  searchGenders(searchGenders: String!): [CreateUserResponse!]!
+  removeGender(id: DeleteGenderInput!): CreateGenderResponse!
+  searchGendersBySlug(searchGenders: SearchGenderSlugInput!): [CreateUserResponse!]!
   updateGender(updateGenderInput: UpdateGenderInput!): CreateGenderResponse!
   verifyOtp(otpInput: OtpInput!): OtpVerifyResponse!
   viewIntroFeed: [CreateIntroResponse!]!
@@ -129,15 +141,15 @@ input OtpInput {
 }
 
 type OtpUserResponse {
-  id: ID!
+  _id: ID!
   newUser: Boolean!
   otp: Float!
   phone_number: Float!
 }
 
 type OtpVerifyResponse {
+  _id: ID!
   access_token: String!
-  id: ID!
 }
 
 input PhoneInput {
@@ -145,7 +157,9 @@ input PhoneInput {
 }
 
 type Query {
+  AdminProfile: CreateAdminDto!
   findAll: [CreateAdminDto!]!
+  findGenderById(id: String!): CreateGenderResponse!
   findGenders: [CreateGenderResponse!]!
   listUser: [CreateUserResponse!]!
 }
@@ -159,9 +173,13 @@ type ResetPasswordResponse {
   resetPassword: Boolean!
 }
 
+input SearchGenderSlugInput {
+  slugName: GenderSlug!
+}
+
 input UpdateGenderInput {
+  _id: ID!
   genderName: String
-  id: ID!
   order: Float
   slugName: GenderSlug
 }
@@ -181,6 +199,6 @@ type User {
 }
 
 type UserDetailGenderResponse {
+  _id: ID!
   genderName: String!
-  id: ID!
 }

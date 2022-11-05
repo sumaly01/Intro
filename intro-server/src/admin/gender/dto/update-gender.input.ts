@@ -4,5 +4,5 @@ import { CreateGenderInput } from './create-gender.input';
 @InputType()
 export class UpdateGenderInput extends PartialType(CreateGenderInput) {
   @Field(() => ID)
-  id: string;
+  _id: string;
 }

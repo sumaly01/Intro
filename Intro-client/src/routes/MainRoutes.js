@@ -28,8 +28,9 @@ const AppProfileListStyle1 = Loadable(lazy(() => import('views/application/users
 const AppProfileListStyle2 = Loadable(lazy(() => import('views/application/users/list/Style2')));
 
 // application - customer routing
-const AppProjectList = Loadable(lazy(() => import('views/application/customer/ProjectList')));
-const AppUsersList = Loadable(lazy(() => import('views/application/customer/UsersList')));
+const AppUserList = Loadable(lazy(() => import('views/application/customer/UserList')));
+const AppGendersList = Loadable(lazy(() => import('views/application/customer/GendersList')));
+// const GenderSearch = Loadable(lazy(() => import('views/application/customer/GenderSearch')));
 
 const AppCustomerOrderList = Loadable(lazy(() => import('views/application/customer/OrderList')));
 const AppCustomerCreateInvoice = Loadable(lazy(() => import('views/application/customer/CreateInvoice')));
@@ -67,7 +68,7 @@ const FrmComponentsDateTime = Loadable(lazy(() => import('views/forms/components
 const FrmLayoutLayout = Loadable(lazy(() => import('views/forms/layouts/Layouts')));
 const FrmLayoutMultiColumnForms = Loadable(lazy(() => import('views/forms/layouts/MultiColumnForms')));
 const FrmLayoutActionBar = Loadable(lazy(() => import('views/forms/layouts/ActionBar')));
-const FrmLayoutAddUser = Loadable(lazy(() => import('views/forms/layouts/AddUserForm')));
+const FrmLayoutAddUser = Loadable(lazy(() => import('views/forms/layouts/AddGenderForm')));
 const FrmLayoutAddProject = Loadable(lazy(() => import('views/forms/layouts/AddProjectsForm')));
 // forms plugins routing
 const FrmAutocomplete = Loadable(lazy(() => import('views/forms/plugins/AutoComplete')));
@@ -196,13 +197,14 @@ const MainRoutes = {
         },
 
         {
-            path: '/project/project-list',
-            element: <AppProjectList />
+            path: '/users/user-list',
+            element: <AppUserList />
         },
         {
-            path: '/users/users-list',
-            element: <AppUsersList />
+            path: '/genders/genders-list',
+            element: <AppGendersList />
         },
+
         {
             path: '/customer/order-list',
             element: <AppCustomerOrderList />
@@ -322,7 +324,7 @@ const MainRoutes = {
             element: <FrmLayoutActionBar />
         },
         {
-            path: '/users/add-user',
+            path: '/genders/add-gender',
             element: <FrmLayoutAddUser />
         },
         {
